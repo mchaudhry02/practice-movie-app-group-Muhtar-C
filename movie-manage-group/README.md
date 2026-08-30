@@ -8,19 +8,24 @@ projects (Phase 1), enhanced with an AI-powered feature (Phase 2).
 **Base app (CRUD):**
 - Add, view, edit, and delete movies
 - Track genre, director, release year, watched status, personal rating, and notes
-
-**Group AI enhancement — "AI Movie Assistant":**
-The group discussed what would help a user *choose or review* movies, and landed on
-two complementary AI features built on top of an LLM (OpenAI's chat completion API):
+  **Group AI enhancement — "AI Movie Assistant":**
+  The group discussed what would help a user *choose or review* movies, and landed on
+  two complementary AI features built on top of an LLM (OpenAI's chat completion API):
 
 1. **AI Summary** — generates a short, spoiler-free blurb about the movie, useful when
    you've forgotten what a title in your list is even about.
 2. **Watch Next Recommendations** — given a movie you just watched, the AI suggests
    3 similar movies you might enjoy next, with a one-sentence reason for each,
    aware of what's already in your collection.
+   Both are triggered by buttons on the movie's detail page and are cached on the
+   `Movie` record so you don't re-call the API every time you view the page.
 
-Both are triggered by buttons on the movie's detail page and are cached on the
-`Movie` record so you don't re-call the API every time you view the page.
+> **Note:** This demo does not include a funded OpenAI API key. Clicking the AI
+> buttons will show a graceful fallback message rather than a live response —
+> this is expected behavior and confirms the integration (route → service →
+> API call → error handling → UI) works correctly end-to-end. To see live
+> responses, set the `OPENAI_API_KEY` environment variable to a key on an
+> account with billing enabled (see Setup below).
 
 ## Tech Stack
 - Java 17, Spring Boot 3.2
@@ -28,22 +33,20 @@ Both are triggered by buttons on the movie's detail page and are cached on the
 - Spring Data JPA + H2 in-memory database
 - Bean Validation for form input
 - Java's built-in `HttpClient` for calling the OpenAI API (no extra HTTP library needed)
-
 ## Setup
 
 1. Clone the repo and open it in your IDE.
 2. **Set your OpenAI API key** as an environment variable (do NOT hardcode it or commit it):
-   ```bash
+```bash
    export OPENAI_API_KEY=sk-...your-key-here...
-   ```
-   If no key is set, the AI buttons still work but return a friendly placeholder
-   message instead of calling the API — the rest of the app functions normally.
+```
+If no key is set, the AI buttons still work but return a friendly placeholder
+message instead of calling the API — the rest of the app functions normally.
 3. Run the app:
-   ```bash
+```bash
    ./mvnw spring-boot:run
-   ```
+```
 4. Visit `http://localhost:8080/movies`
-
 ## Project structure
 
 ```
@@ -56,7 +59,7 @@ src/main/java/com/launchcode/moviemanager/
 │   └── AiMovieService.java        # calls OpenAI, has graceful fallback
 └── controllers/
     └── MovieController.java       # CRUD + AI routes
-
+ 
 src/main/resources/
 ├── application.properties
 ├── static/css/styles.css
@@ -74,8 +77,3 @@ src/main/resources/
   and agreed an AI assistant that summarizes movies and recommends what to watch
   next was the most broadly useful addition, so we built the `AiMovieService`
   together and wired it into the movie detail page.
-
-## Submission
-Push this repo to a **public** GitHub repository named:
-`practice-movie-app-group[FirstName]-[LastInitial]`
-and submit the repo URL.
