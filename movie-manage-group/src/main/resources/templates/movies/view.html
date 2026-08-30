@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/layout :: head(${title})}"></head>
+<body>
+<nav th:replace="~{fragments/layout :: nav}"></nav>
+<div class="container" style="max-width: 700px;">
+
+    <h1 th:text="${movie.title}">Title</h1>
+    <h5 class="text-muted" th:text="${movie.genre} + ' · ' + ${movie.releaseYear} + ' · Directed by ' + ${movie.director}">
+        Genre · Year · Director
+    </h5>
+
+    <p class="mt-2">
+        <span th:if="${movie.watched}" class="badge bg-success">Watched</span>
+        <span th:unless="${movie.watched}" class="badge bg-secondary">Not watched yet</span>
+        <span th:if="${movie.rating != null}" class="ms-2">
+            <span th:each="i : ${#numbers.sequence(1, movie.rating)}">★</span>
+        </span>
+    </p>
+
+    <p th:if="${movie.notes != null and !movie.notes.isEmpty()}">
+        <strong>Notes:</strong> <span th:text="${movie.notes}"></span>
+    </p>
+
+    <div class="mb-3">
+        <a class="btn btn-outline-secondary" th:href="@{/movies/edit/{id}(id=${movie.id})}">Edit</a>
+        <a class="btn btn-outline-danger" th:href="@{/movies/delete/{id}(id=${movie.id})}"
+           onclick="return confirm('Delete this movie?');">Delete</a>
+    </div>
+
+    <hr>
+
+    <!-- AI Enhancement Section (group Phase 2 feature) -->
+    <div class="card bg-light mb-4">
+        <div class="card-body">
+            <h4 class="card-title">✨ AI Movie Assistant</h4>
+            <p class="text-muted small" th:unless="${aiConfigured}">
+                No OpenAI API key configured yet — buttons below will show a placeholder message
+                until one is added. See the README for setup.
+            </p>
+
+            <div class="mb-3">
+                <a class="btn btn-sm btn-primary" th:href="@{/movies/{id}/ai-summary(id=${movie.id})}">
+                    Generate AI Summary
+                </a>
+                <div class="mt-2" th:if="${movie.aiSummary != null and !movie.aiSummary.isEmpty()}">
+                    <p class="fst-italic" th:text="${movie.aiSummary}"></p>
+                </div>
+            </div>
+
+            <div>
+                <a class="btn btn-sm btn-success" th:href="@{/movies/{id}/ai-recommendations(id=${movie.id})}">
+                    Get "Watch Next" Recommendations
+                </a>
+                <div class="mt-2" th:if="${movie.aiRecommendations != null and !movie.aiRecommendations.isEmpty()}">
+                    <pre class="border rounded p-2 bg-white" style="white-space: pre-wrap;" th:text="${movie.aiRecommendations}"></pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <a th:href="@{/movies}">&larr; Back to all movies</a>
+
+</div>
+</body>
+</html>
